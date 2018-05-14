@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 /**
  * Tests for the AccountService.
- * 
+ *
  * @author David Ferreira Pinto
  *
  */
@@ -35,10 +35,10 @@ public class AccountServiceTest {
 
 	@InjectMocks
 	AccountService service;
-	
+
 	@Mock
 	AccountRepository repo;
-	
+
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
@@ -51,7 +51,8 @@ public class AccountServiceTest {
 	 */
 	@Test
 	public void doFindAccount() {
-		when(repo.findOne(ServiceTestConfiguration.PROFILE_ID)).thenReturn(ServiceTestConfiguration.account());
+		// when(repo.findOne(ServiceTestConfiguration.PROFILE_ID)).thenReturn(ServiceTestConfiguration.account());
+		when(repo.findById(ServiceTestConfiguration.PROFILE_ID).orElse(null)).thenReturn(ServiceTestConfiguration.account());
 		assertEquals(service.findAccount(ServiceTestConfiguration.PROFILE_ID).toString(),ServiceTestConfiguration.account().toString());
 	}
 	/**
@@ -73,7 +74,7 @@ public class AccountServiceTest {
 		List<Account> accounts = service.findAccounts(ServiceTestConfiguration.BAD_USER_ID);
 		assertEquals(accounts.size(),0);
 	}
-	
+
 	/**
 	 * test retrieval of account by userid and type.
 	 */
@@ -84,16 +85,17 @@ public class AccountServiceTest {
 		assertEquals(accounts.size(),1);
 		assertEquals(accounts.get(0),ServiceTestConfiguration.account());
 	}
-	
+
 	/**
 	 * test retrieval of account not found.
 	 */
 	@Test(expected=NoRecordsFoundException.class)
 	public void doFindNullAccount() {
-		when(repo.findOne(999)).thenReturn(null);
+		// when(repo.findOne(999)).thenReturn(null);
+		when(repo.findById(999).orElse(null)).thenReturn(null);
 		service.findAccount(999);
 	}
-	
+
 	/**
 	 * test saving of account.
 	 */
@@ -104,7 +106,7 @@ public class AccountServiceTest {
 		assertEquals(service.saveAccount(acc),acc.getId());
 	}
 
-	
+
 	/**
 	 * Test Account domain object hashcode.
 	 */
@@ -112,7 +114,7 @@ public class AccountServiceTest {
 	public void testAccountObject() {
 		Account acc1 = ServiceTestConfiguration.account();
 		Account acc2 = ServiceTestConfiguration.account();
-		
+
 		assertEquals(acc1.hashCode(),acc2.hashCode());
 	}
 }
